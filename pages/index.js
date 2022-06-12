@@ -1,13 +1,9 @@
 import React, { useContext, useEffect } from "react";
 import { TransactionContext } from "../context/TransactionContext";
-import { shortenAddress } from "../utils/shortenAddress";
 import Navbar from "../components/NavBar";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import anime from "../public/updated-staking.gif";
-
-const commonStyles =
-  "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
 
 const Input = ({ placeholder, name, type, value, handleChange }) => (
   <input
@@ -21,8 +17,7 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
 );
 
 const Home = () => {
-  const { connectWallet, currentAccount} =
-    useContext(TransactionContext);
+  const { connectWallet, currentAccount } = useContext(TransactionContext);
   const router = useRouter();
   useEffect(() => {
     if (currentAccount) {
@@ -32,9 +27,8 @@ const Home = () => {
 
   return (
     <div className="">
-      <div className="min-h-screen bg-[#10122d] md:min-h-0 relative">
+      <div className="relative min-h-screen  bg-[#10122d] bg-gear ">
         <Navbar />
-        
 
         <div className=" w-full  py-12">
           <div className="flex  py-12 md:flex  md:items-center md:justify-around ">
@@ -43,7 +37,8 @@ const Home = () => {
                 Stake your Cause <br />
               </h1>
               <p className="mt-5 w-11/12 text-left text-base font-light text-white md:w-9/12">
-                Earn money with your Cause coins, with some APY of 12%
+                Grow your coins by earning APY of 5.12% to 30.60% when you
+                stake.
               </p>
               <button
                 type="button"
@@ -57,10 +52,7 @@ const Home = () => {
             </div>
 
             <div className="flex-[0.5] ">
-              <Image
-                src={anime}
-                className="rounded-full"
-              />
+              <Image src={anime} className="rounded-full" />
             </div>
           </div>
         </div>

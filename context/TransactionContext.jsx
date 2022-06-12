@@ -41,12 +41,12 @@ export const TransactionProvider = ({ children }) => {
   const [formData, setFormData] = useState({
     amount: "",
   });
+  const [stakePeriod, setStakePeriod] = useState(null);
   const [totalAddressStakes, settotalAddressStakes] = useState(0);
   const [accountStakes, setaccountStakes] = useState([]);
   const [totalStakedAmount, settotalStakedAmount] = useState(0);
   const [isLoading, setIsloading] = useState(false);
   const [isStaking, setIsstaking] = useState(false);
-  
 
   const handleChainIDChange = () => {
     try {
@@ -109,32 +109,35 @@ export const TransactionProvider = ({ children }) => {
     }
   };
 
+  const SetDuration = (time) => {
+    setStakePeriod(time);
+    console.log(time);
+  };
+
   const stakeCause = async () => {
     try {
       if (!BinanceChain) return alert("Please install Binance wallet!");
       setIsstaking(true);
       const causeContract = getCauseContract();
       const stakingContract = getCauseStakingContract();
-      // console.log(formData.amount)
-      let res=await causeContract.approve(contractAddress, formData.amount);
+      let res = await causeContract.approve(contractAddress, formData.amount);
 
-      console.log("transaction has been sent")
-      console.log(res.hash)
+      console.log("transaction has been sent");
+      console.log(res.hash);
 
-      let receipt=await res.wait();
+      let receipt = await res.wait();
 
-      console.log(`transaction has been successfull `)
+      console.log(`transaction has been successfull `);
 
-
-     
-      let result = await stakingContract.stake(formData.amount);
-      console.log(`stake has created`)
-      let logs= await  result.wait();
-      console.log(`stake has been made`)
+      // //  add a duration parameter
+      let result = await stakingContract.stake(formData.amount, stakePeriod);
+      console.log(`stake has created`);
+      let logs = await result.wait();
+      console.log(`stake has been made`);
       setFormData((prevState) => ({ ...prevState, ["amount"]: "" }));
-      setIsstaking(false)
-      getAllStakes()
-    //  router.push("/stakes");
+      setIsstaking(false);
+      getAllStakes();
+      //  router.push("/stakes");
     } catch (e) {
       console.log(e);
     }
@@ -146,12 +149,11 @@ export const TransactionProvider = ({ children }) => {
 
       const stakingContract = getCauseStakingContract();
       let result = await stakingContract.unstake(id);
-      console.log(`transaction sent tx hash -----> ${result.hash}`)
-     let reciept=await result.wait();
-      console.log(`transaction confirmed you have unstaked `)
-      console.log(reciept)
-      getAllStakes()
-    
+      console.log(`transaction sent tx hash -----> ${result.hash}`);
+      let reciept = await result.wait();
+      console.log(`transaction confirmed you have unstaked `);
+      console.log(reciept);
+      getAllStakes();
     } catch (e) {
       console.log(e);
     }
@@ -163,19 +165,23 @@ export const TransactionProvider = ({ children }) => {
 
       const stakingContract = getCauseStakingContract();
       let stakes = await stakingContract.addressStakes();
-      let newStake=stakes.map((stake)=>{
-        console.log(stake.amount)
-        let newStake={}
-        if(stake !== undefined){
-        newStake["amount"]=stake.amount.toNumber()
-        newStake["since"]=stake.since.toNumber()
-        newStake["user"]=stake.user
-        newStake["id"]=stake.stakeId.toNumber()
+      let newStake = stakes.map((stake) => {
+        console.log(stake.amount);
+        let newStake = {};
+        if (stake !== undefined) {
+          newStake["amount"] = stake.amount.toNumber();
+          newStake["since"] = stake.since.toNumber();
+          newStake["user"] = stake.user;
+          newStake["id"] = stake.stakeId.toNumber();
+          newStake["duration"] =
+            stake.duration.toNumber() / (60 * 60 * 24) / 30;
+          newStake["dueDate"] = stake.dueDate.toNumber();
 
-        return newStake;
-        } });
+          return newStake;
+        }
+      });
 
-        // console.log(newStake)
+      console.log(newStake);
       setaccountStakes(newStake);
     } catch (e) {
       console.log(e);
@@ -189,7 +195,6 @@ export const TransactionProvider = ({ children }) => {
       const stakingContract = getCauseStakingContract();
       let amount = await stakingContract.stakedAmount();
       settotalStakedAmount(amount.toNumber());
-      // console.log(amount);
     } catch (e) {
       console.log(e);
     }
@@ -201,8 +206,6 @@ export const TransactionProvider = ({ children }) => {
       const accounts = await BinanceChain.request({ method: "eth_accounts" });
       if (accounts.length) {
         setcurrentAccount(accounts[0]);
-
-
       } else {
         console.log("no account found");
       }
@@ -233,18 +236,17 @@ export const TransactionProvider = ({ children }) => {
     }
   };
 
-  const calculateStakedAmount=()=>{
-    if(accountStakes){
+  const calculateStakedAmount = () => {
+    if (accountStakes) {
       // console.log(accountStakes);
-      let total=0;
-      for(let i=0; i<accountStakes.length; i++){
-        total+=accountStakes[i].amount;
+      let total = 0;
+      for (let i = 0; i < accountStakes.length; i++) {
+        total += accountStakes[i].amount;
       }
 
       settotalAddressStakes(total);
     }
-  
-  }
+  };
 
   useEffect(() => {
     checkIfWalletIsConnected();
@@ -255,7 +257,7 @@ export const TransactionProvider = ({ children }) => {
       getAddressBNBbalance();
       getCauseCoinBalance();
       getAllStakes();
-      getTotaStakedAmount()
+      getTotaStakedAmount();
     }
   }, [currentAccount]);
 
@@ -271,6 +273,7 @@ export const TransactionProvider = ({ children }) => {
         formData,
         currentAccount,
         isLoading,
+        SetDuration,
         BnBbalance,
         Causebalance,
         chainId,
@@ -282,8 +285,8 @@ export const TransactionProvider = ({ children }) => {
         unStakeCause,
         getAllStakes,
         getTotaStakedAmount,
-        isStaking
-        
+        isStaking,
+        stakePeriod,
       }}
     >
       {children}

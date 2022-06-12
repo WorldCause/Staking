@@ -1,6 +1,8 @@
+import React from 'react'
+import ReactPlayer from 'react-player/lazy'
 import Image from "next/Image";
 import { useRouter } from "next/router";
-import { HiMenuAlt4 } from "react-icons/hi";
+import { MdCancel } from "react-icons/md";
 import { AiOutlineClose } from "react-icons/ai";
 import logo from "../public/logo.png";
 import { useState, useContext, useEffect } from "react";
@@ -67,34 +69,37 @@ const Navbar = () => {
         <Image src={logo} alt="cause coin logo" />
       </div>
 
-      <div className="ligth-blue-glassmorphism fixed top-0 left-0 right-0  z-10 mx-auto mt-28 flex min-h-[60%] w-[60%] text-xl text-white">
-        <div className="flex justify-center p-4">
-          <h3 className="text-gradient text-justify text-3xl">
-            HOW STAKING WORKS
+     {toggleMenu &&<div className="ligth-blue-glassmorphism fixed top-0 left-0 right-0  z-10 mx-auto mt-28 flex min-h-[58%] w-[46%] text-xl text-white">
+        <div className="flex-col justify-center items-center px-4">
+          <h3 className="text-gradient text-justify text-xl mt-2">
+            How staking works
           </h3>
+          <div className="mx- mt-6 flex ">
+          <ReactPlayer  url='https://www.youtube.com/watch?v=ysz5S6PUM-U' />
+          </div>
         </div>
-
-        <button type="button" className="fixed top-4 right-10 ">
-          X
+        <button type="button" className="fixed top-4 right-5 " 
+        onClick={()=>setToggleMenu(!toggleMenu)}
+        >
+          <MdCancel fontSize={24} color="#fff"/>
         </button>
-      </div>
+      </div>}
 
-      <ul className="mr-20 hidden list-none flex-row items-center justify-between text-white md:flex">
-        {/* {["Network", "Wallet"].map(
-            (item, index) => (
-              <NavbarItem key={item + index} title={item} />
-            )
-          )} */}
+      <ul className="mr-20 hidden list-none flex-row  py-2 w-[20%] justify-evenly  text-white md:flex">
+      
         <button
           type="button"
-          className="mt-2 mr-2 w-full cursor-pointer rounded-full border-none bg-[#2952e3] px-2	 px-4 text-white hover:bg-[#2546bd] "
+          onClick={()=>setToggleMenu(!toggleMenu)}
+          className="mt-2 mr-2 w-full cursor-pointer  border-none  px-2	 text-[#c6c7ca]  hover:text-white "
         >
-          How staking works
+          What`s Staking
         </button>
+
+        {/* <span className="mt-2 mr-2 w-full"/> */}
         <button
           type="button"
           onClick={currentAccount ? disconnectAccount : connectWallet}
-          className="mt-2 w-full cursor-pointer rounded-full border-none bg-[#2952e3]  p-2	 px-4 text-white hover:bg-[#2546bd] "
+          className="mt-2 w-full cursor-pointer rounded-full border-none bg-[#2952e3] 	py-2 px-2 text-white hover:bg-[#2546bd] "
         >
           {!currentAccount ? "Connect Wallet" : "Disconnect Wallet"}
         </button>

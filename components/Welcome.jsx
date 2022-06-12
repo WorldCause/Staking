@@ -185,6 +185,19 @@ const Welcome = () => {
         </div>
         )}
         
+                  {/* <div className="ligth-blue-glassmorphism mx-auto  mb-4 flex w-[100%] flex-col rounded p-2 text-blue-400">
+            <div className="mb-2 flex flex-row items-center justify-between">
+              <p>Cause coins Staked</p>
+              
+              <p className="px-2 text-red-700 bg-green-100 rounded-full ">{totalStakedAmount?`${totalStakedAmount}`:null}</p>
+            </div>
+
+            <div className="flex flex-row items-center justify-between">
+              <p>Staking Interest</p>
+              <p> 10 % APY </p>
+            </div>
+          </div> */}
+
         
       </div>
     </div>
