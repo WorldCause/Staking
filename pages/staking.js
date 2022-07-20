@@ -32,8 +32,8 @@ const Btn = ({ time }) => {
       onClick={(e)=>handleClick(e)}
       className={
         !isClicked
-          ? `mx-2 rounded bg-slate-500 px-2 py-2 hover:bg-slate-200 hover:text-black`
-          : `rounded bg-red-600 px-4 py-2 `
+          ? `mx-2 rounded bg-slate-500 px-2 py-2`
+          : `rounded bg-amber-500 px-4 py-2 `
       }
     >
       {time} Months at{" "}
@@ -60,6 +60,11 @@ const Staking = () => {
     stakeCause,
     isStaking,
     stakePeriod,
+    getTotaStakedAmount,
+    totalAddressStakes,
+    calculateStakedAmount,
+    addressRewards,
+
   } = useContext(TransactionContext);
 
   const handleSubmit = (e) => {
@@ -76,6 +81,9 @@ const Staking = () => {
     }
   });
 
+  useEffect(() => {
+    calculateStakedAmount()
+  },[]);
   return (
     <div className="min-h-screen bg-[#10122d] text-white">
       <Navbar />
@@ -94,7 +102,7 @@ const Staking = () => {
                 <h3 className="ml-2 text-xl text-white">Staked Cause</h3>
               </div>
 
-              <p>Amount : {totalStakedAmount} </p>
+              <p>Amount : {totalAddressStakes} </p>
             </div>
 
             <div className="border-1 mx-2  flex flex-col justify-center rounded-full rounded  p-6  text-white">
@@ -106,7 +114,7 @@ const Staking = () => {
               </div>
 
               <p className="">
-                Amount : {totalStakedAmount + totalStakedAmount * 0.01}{" "}
+                Amount : {addressRewards}
               </p>
             </div>
           </div>

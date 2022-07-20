@@ -75,7 +75,7 @@ const Navbar = () => {
             How staking works
           </h3>
           <div className="mx- mt-6 flex ">
-          <ReactPlayer  url='https://www.youtube.com/watch?v=ysz5S6PUM-U' />
+          <ReactPlayer  url="https://www.youtube.com/watch?v=vZ2UZdB07fo" />
           </div>
         </div>
         <button type="button" className="fixed top-4 right-5 " 

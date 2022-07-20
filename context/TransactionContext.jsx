@@ -47,6 +47,44 @@ export const TransactionProvider = ({ children }) => {
   const [totalStakedAmount, settotalStakedAmount] = useState(0);
   const [isLoading, setIsloading] = useState(false);
   const [isStaking, setIsstaking] = useState(false);
+  const [addressRewards, setAddressRewards] = useState(0);
+
+  const REWARDS = {
+    six: 5.12,
+    twelve: 8.3,
+    eighteen: 16.08,
+    twentyFour: 30.6,
+  };
+
+  const getReward = (stake) => {
+    let reward;
+    if (stake !== undefined) {
+      // console.log(stake)
+      if (stake.duration === 6) {
+        reward = stake.amount * REWARDS["six"];
+        stake["reward"] = reward.toFixed(0);
+        return stake;
+      }
+
+      if (stake.duration === 12) {
+        reward = stake.amount * REWARDS["twelve"];
+        stake["reward"] = reward.toFixed(0);
+        return stake;
+      }
+
+      if (stake.duration === 18) {
+        reward = stake.amount * REWARDS["eighteen"];
+        stake["reward"] = reward.toFixed(0);
+        return stake;
+      }
+
+      if (stake.duration === 24) {
+        reward = stake.amount * REWARDS["twentyFour"];
+        stake["reward"] = reward.toFixed(0);
+        return stake;
+      }
+    }
+  };
 
   const handleChainIDChange = () => {
     try {
@@ -102,7 +140,8 @@ export const TransactionProvider = ({ children }) => {
       // ensure that chain id mainet
       const causeContract = getCauseContract();
       let balance = await causeContract.balanceOf(currentAccount);
-      // console.log(balance);
+      // let parsedAmount=ethers.utils.parseEther(balance);
+      console.log(balance);
       setCausebalance(balance);
     } catch (e) {
       console.log(e);
@@ -120,6 +159,8 @@ export const TransactionProvider = ({ children }) => {
       setIsstaking(true);
       const causeContract = getCauseContract();
       const stakingContract = getCauseStakingContract();
+      // let parsedAmount=ethers.utils.parseEther(formData.amount);
+      // console.log(parsedAmount.toNumber())
       let res = await causeContract.approve(contractAddress, formData.amount);
 
       console.log("transaction has been sent");
@@ -135,9 +176,12 @@ export const TransactionProvider = ({ children }) => {
       let logs = await result.wait();
       console.log(`stake has been made`);
       setFormData((prevState) => ({ ...prevState, ["amount"]: "" }));
+      setStakePeriod(null);
       setIsstaking(false);
       getAllStakes();
-      //  router.push("/stakes");
+      if (logs) {
+        router.push("/stakes");
+      }
     } catch (e) {
       console.log(e);
     }
@@ -166,7 +210,7 @@ export const TransactionProvider = ({ children }) => {
       const stakingContract = getCauseStakingContract();
       let stakes = await stakingContract.addressStakes();
       let newStake = stakes.map((stake) => {
-        console.log(stake.amount);
+        // console.log(stake.amount);
         let newStake = {};
         if (stake !== undefined) {
           newStake["amount"] = stake.amount.toNumber();
@@ -177,10 +221,32 @@ export const TransactionProvider = ({ children }) => {
             stake.duration.toNumber() / (60 * 60 * 24) / 30;
           newStake["dueDate"] = stake.dueDate.toNumber();
 
+          let period = stake.duration.toNumber() / (60 * 60 * 24) / 30;
+          let reward;
+
+          if (period === 6) {
+            reward = stake.amount.toNumber() * REWARDS["six"]/100;
+            newStake["reward"] = reward.toFixed(0);
+          }
+
+          if (period === 12) {
+            reward = stake.amount.toNumber() * REWARDS["twelve"]/100;
+            newStake["reward"] = reward.toFixed(0);
+          }
+
+          if (period === 18) {
+            reward = stake.amount.toNumber() * REWARDS["eighteen"]/100;
+            newStake["reward"] = reward.toFixed(0);
+          }
+
+          if (period === 24) {
+            reward = stake.amount.toNumber() * REWARDS["twentyFour"]/100;
+            newStake["reward"] = parseInt(reward.toFixed(0));
+          }
+
           return newStake;
         }
       });
-
       console.log(newStake);
       setaccountStakes(newStake);
     } catch (e) {
@@ -238,18 +304,46 @@ export const TransactionProvider = ({ children }) => {
 
   const calculateStakedAmount = () => {
     if (accountStakes) {
-      // console.log(accountStakes);
+      console.log(accountStakes);
       let total = 0;
       for (let i = 0; i < accountStakes.length; i++) {
-        total += accountStakes[i].amount;
+        if (accountStakes[i] !== undefined) {
+          total += accountStakes[i].amount;
+        }
       }
 
       settotalAddressStakes(total);
     }
   };
 
+  const calculateStakedRewards = () => {
+    if (accountStakes) {
+      console.log(accountStakes);
+      let total = 0;
+
+      for (let i = 0; i < accountStakes.length; i++) {
+        if (accountStakes[i].id !==0) {
+          
+          let num = parseInt(accountStakes[i].reward);
+          if(num !== NaN){
+
+            console.log(num);
+            total += num;
+          }
+        }
+      }
+
+      console.log(total);
+
+      setAddressRewards(total);
+    }
+  };
+
+
+
   useEffect(() => {
     checkIfWalletIsConnected();
+    getTotaStakedAmount();
   }, []);
 
   useEffect(() => {
@@ -265,6 +359,7 @@ export const TransactionProvider = ({ children }) => {
     calculateStakedAmount();
   }, [accountStakes]);
 
+  // console.log(accountStakes);
   return (
     <TransactionContext.Provider
       value={{
@@ -287,6 +382,9 @@ export const TransactionProvider = ({ children }) => {
         getTotaStakedAmount,
         isStaking,
         stakePeriod,
+        calculateStakedAmount,
+        addressRewards,
+        calculateStakedRewards,
       }}
     >
       {children}

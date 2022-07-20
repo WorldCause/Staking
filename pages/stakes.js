@@ -69,10 +69,15 @@ const StakingTotalCard = () => {
     Causebalance,
     accountStakes,
     totalAddressStakes,
+    addressRewards,
+    calculateStakedRewards
   } = useContext(TransactionContext);
 
-  let apy = 0.01;
-  const totalReward = totalAddressStakes * apy;
+  useEffect(() => {
+    calculateStakedRewards()
+  }, []);
+
+  console.log(addressRewards.toString());
 
   return (
     <div className="flex w-full justify-between rounded-3xl bg-slate-800 p-4">
@@ -83,7 +88,7 @@ const StakingTotalCard = () => {
 
       <div>
         <p className="text-2xl">Total Rewards</p>
-        <p className="p-2  text-xl">{totalReward}</p>
+        <p className="p-2  text-xl">{addressRewards}</p>
       </div>
     </div>
   );
@@ -141,6 +146,7 @@ const Staking = () => {
           <StakingTotalCard />
           <div className="mt-4 w-full rounded-full border-b bg-white "></div>
           <StakingTitle />
+          <div className="overflow-y-auto">
           {accountStakes ? (
             accountStakes.map((stake, idx) => {
               if (stake.amount !== 0) {
@@ -149,7 +155,7 @@ const Staking = () => {
                     dueDate={stake.dueDate}
                     amountStaked={stake.amount}
                     duration={stake.duration}
-                    reward={getReward(stake.amount)}
+                    reward={stake.reward}
                     key={idx}
                     stakeId={stake.id}
                   />
@@ -159,6 +165,7 @@ const Staking = () => {
           ) : (
             <p>Start Staking</p>
           )}
+          </div>
         </div>
       </div>
     </div>
