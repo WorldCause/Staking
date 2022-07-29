@@ -55,23 +55,20 @@ const Staking = () => {
     formData,
     Causebalance,
     totalStakedAmount,
-    isLoading,
     handleChange,
     stakeCause,
     isStaking,
     stakePeriod,
-    getTotaStakedAmount,
-    totalAddressStakes,
     calculateStakedAmount,
-    addressRewards,
-
   } = useContext(TransactionContext);
 
   const handleSubmit = (e) => {
     const { amount } = formData;
 
     e.preventDefault();
-    if (!amount && !stakePeriod) return;
+    if (!amount || stakePeriod === null) {
+      alert("add a duration period for staking")
+      return;}
     stakeCause();
   };
 
@@ -92,7 +89,7 @@ const Staking = () => {
         <div className="blue-glassmorphism flex w-full  flex-col py-14 md:mx-2 md:w-full ">
           <h2 className="mb-8 flex flex-row items-center justify-center text-center  text-2xl text-white">
             <GiCoins fontSize={21} color="white" />
-            <p className="ml-4 text-white">Your Account</p>
+            <p className="ml-4 text-white">Total Locked Stakes</p>
           </h2>
 
           <div className="mt-4 flex flex-row items-center justify-center">
@@ -102,19 +99,19 @@ const Staking = () => {
                 <h3 className="ml-2 text-xl text-white">Staked Cause</h3>
               </div>
 
-              <p>Amount : {totalAddressStakes} </p>
+              <p className="text-center">Amount : {totalStakedAmount} </p>
             </div>
 
             <div className="border-1 mx-2  flex flex-col justify-center rounded-full rounded  p-6  text-white">
               <div>
                 <div className="flex flex-row items-center justify-center  pb-4">
                   <GiPayMoney fontSize={21} color="orange" />
-                  <h3 className="ml-2 text-xl text-white">Total Rewards</h3>
+                  <h3 className="ml-2 text-lg text-white">Average Staking Period </h3>
                 </div>
               </div>
 
-              <p className="">
-                Amount : {addressRewards}
+              <p className="text-center">
+                Months : {18}
               </p>
             </div>
           </div>

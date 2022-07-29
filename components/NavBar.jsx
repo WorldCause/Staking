@@ -1,13 +1,12 @@
 import React from 'react'
 import ReactPlayer from 'react-player/lazy'
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { MdCancel } from "react-icons/md";
 import { AiOutlineClose } from "react-icons/ai";
 import logo from "../public/logo.png";
 import { useState, useContext, useEffect } from "react";
+import Link from "next/link";
 import { TransactionContext } from "../context/TransactionContext";
-
 const NavbarItem = ({ title, classProps }) => {
   return (
     <li className={`mx-4 cursor-pointer  rounded-full${classProps}`}>
@@ -85,17 +84,38 @@ const Navbar = () => {
         </button>
       </div>}
 
-      <ul className="mr-20 hidden list-none flex-row  py-2 w-[20%] justify-evenly  text-white md:flex">
+      <ul className="mr-20 hidden list-none flex-row  py-2 w-[33%] justify-evenly text-white md:flex">
+      <li className=" cursor-pointer  px-2 text-white mr-2">
+        
+        <Link href="https://worldcausecoin.com/">
+            <button className=" mt-2 cursor-pointer border-none py-2 rounded-full  text-[#c6c7ca]  hover:text-white  ">
+             Home
+            </button>
+          </Link>
+      </li>
       
+      <li className=" cursor-pointer  px-2 text-white ">
+        
+        <Link href="/staking">
+            <button className=" mt-2 cursor-pointer border-none py-2 rounded-full  text-[#c6c7ca]  hover:text-white  ">
+             Stake
+            </button>
+          </Link>
+      </li>
+
+      <li className="py-2 px-7 mr-2 text-white ">
         <button
           type="button"
           onClick={()=>setToggleMenu(!toggleMenu)}
-          className="mt-2 mr-2 w-full cursor-pointer  border-none  px-2	 text-[#c6c7ca]  hover:text-white "
+          className="mt-2 cursor-pointer  border-none  text-[#c6c7ca]  hover:text-white "
         >
           What`s Staking
         </button>
+      </li>
 
-        {/* <span className="mt-2 mr-2 w-full"/> */}
+
+      <li>
+
         <button
           type="button"
           onClick={currentAccount ? disconnectAccount : connectWallet}
@@ -103,6 +123,9 @@ const Navbar = () => {
         >
           {!currentAccount ? "Connect Wallet" : "Disconnect Wallet"}
         </button>
+      </li>
+
+
         <li className="mx-4 hidden cursor-pointer rounded-full bg-[#2952e3] py-2 px-7 text-white hover:bg-[#2546bd]">
           Disconnect
         </li>

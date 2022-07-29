@@ -2,17 +2,24 @@ import { useContext, useEffect, useState } from "react";
 import { TransactionContext } from "../context/TransactionContext";
 import Navbar from "../components/NavBar";
 import { useRouter } from "next/router";
+import { IoMdInformationCircleOutline} from "react-icons/io";
+import Countdown from "react-countdown";
+
 
 const StakingTitle = () => (
-  <div className="bg-blue  shadow-2 my-3  flex w-full flex-row items-center justify-around rounded p-4 text-2xl text-blue-400">
-    <p className="rounded px-2 ">Stake ID</p>
+  <div className=" shadow-2 my-2  px-4  w-full flex items-center justify-around rounded p-4 text-xl text-blue-400">
+    <p className="rounded mx-2 pl-  text-center w-3/6">Stake ID</p>
 
-    <p className="rounded px-2 ">Stake Amount</p>
-    <p className="-ml-16 rounded px-2  ">Stake Period</p>
+    <p className="rounded mx-3  text-center pl-2 w-4/6">Stake Amount</p>
+    <p className="pl-8 mx-3 rounded  text-left w-2/6">Next Unlock</p>
 
-    <p className="-ml-12 rounded px-2 ">Stake Reward</p>
+    <p className=" mx-2 rounded  text-center w-4/6">Stake Reward</p>
 
-    <div className="w-20 p-4"></div>
+    <div className="w-1/5 p-4 mx-2   text-right flex justify-right">
+      <p className="text-center" title="Unstake button will be active when staking period elapses">
+    <IoMdInformationCircleOutline fontSize={24} color="white"/>
+      </p>
+    </div>
   </div>
 );
 
@@ -20,7 +27,10 @@ const StakeCard = ({ amountStaked, reward, stakeId, duration, dueDate }) => {
   const { unStakeCause } = useContext(TransactionContext);
   const [isUnstaked, setIsUnstaked] = useState(false);
   const [isDisable, setisDisable] = useState(true);
+  const time = new Date();
+ let timeStamp= Math.floor(Date.now()/1000);
 
+  let m=((dueDate)-(timeStamp))
   const handleUnstake = async (id) => {
     setIsUnstaked(true);
     unStakeCause(id);
@@ -32,18 +42,31 @@ const StakeCard = ({ amountStaked, reward, stakeId, duration, dueDate }) => {
       setisDisable(false);
     }
   }, []);
+
+  const renderer = ({ days,hours, minutes,completed }) => {
+    if (completed) {
+      return <></>
+    } else {
+       return <span className="text-black text-center text-lg">{days ?days + " days ":""} {" "} {hours ?hours +" hrs":""} </span>;
+     
+  
+    }
+  };
   return (
-    <div className="shadow-2  my-3 flex  w-full flex-row items-center justify-around rounded-lg  bg-white p-4 text-black">
-      <p className="w-20 rounded px-4 ">{stakeId}</p>
+    <div className="  my-3 flex  w-full flex-row items-center justify-evenly rounded-lg  bg-white py-4 text-black">
+      <p className=" rounded px-2  text-center w-1/6">{stakeId}</p>
 
-      <p className="rounded px-2 ">{amountStaked} CAUSE</p>
+      <p className="rounded  text-center w-1/6">{amountStaked} CAUSE</p>
 
-      <p className="rounded px-2 "> {duration + " Months"}</p>
-      <p className="rounded px-2 ">{reward} CAUSE</p>
+      <p className="rounded px-2  text-center w-1/6">
+         <Countdown date={Date.now() + m*1000}  renderer={renderer}/> 
+         </p>
+      <p className="rounded px-2   text-center w-1/6">{reward.toString().slice(0,6)} CAUSE</p>
 
       {!isUnstaked ? (
         <button
           disabled={isDisable}
+        
           className={
             !isDisable
               ? `rounded-full bg-green-400 px-4 hover:bg-green-700 hover:text-white `
@@ -62,33 +85,34 @@ const StakeCard = ({ amountStaked, reward, stakeId, duration, dueDate }) => {
 
 const StakingTotalCard = () => {
   const {
-    connectWallet,
-    currentAccount,
-    chainId,
-    BnBbalance,
-    Causebalance,
-    accountStakes,
     totalAddressStakes,
     addressRewards,
-    calculateStakedRewards
+    calculateStakedRewards,
+    totalStakedAmount
   } = useContext(TransactionContext);
 
   useEffect(() => {
     calculateStakedRewards()
   }, []);
 
-  console.log(addressRewards.toString());
+
 
   return (
-    <div className="flex w-full justify-between rounded-3xl bg-slate-800 p-4">
-      <div className="w-[50%]">
-        <p className="text-2xl">Total Stakes</p>
-        <p className="p-2 text-xl">{totalAddressStakes}</p>
+    <div className="flex w-full   justify-end rounded-xl bg-[#282d64da] p-4">
+
+      <div className="mr-8 flex-col  order-last justify-center border-l-4 border-indigo-500 pl-8 ">
+        <p className="text-xl text-[#c6c7ca] " title="Total cause locked">Total Cause Staked</p>
+        <p className="py-1 text-lg text-right">{totalStakedAmount}</p>
       </div>
 
-      <div>
-        <p className="text-2xl">Total Rewards</p>
-        <p className="p-2  text-xl">{addressRewards}</p>
+      <div className="mr-8 flex-col  justify-center border-r-4 border-indigo-500 pr-8 ">
+        <p className="text-xl text-[#c6c7ca] ">Your Stakes</p>
+        <p className="py-1 text-lg text-right">{totalAddressStakes}</p>
+      </div>
+
+      <div className="flex-col items-center justify-center pr-8 ">
+        <p className="text-xl text-[#c6c7ca] ">Your Rewards</p>
+        <p className="py-1  text-lg text-right">{addressRewards}</p>
       </div>
     </div>
   );
@@ -104,29 +128,9 @@ const Loader = () => {
 
 const Staking = () => {
   const {
-    connectWallet,
     currentAccount,
-    chainId,
-    BnBbalance,
-    Causebalance,
     accountStakes,
-    totalAddressStakes,
   } = useContext(TransactionContext);
-
-  const handleSubmit = (e) => {
-    const { addressTo, amount, message } = formData;
-    e.preventDefault();
-
-    if (!addressTo || !amount || !message) return;
-    console.log("mama");
-  };
-
-  const getReward = (amount) => {
-    let apy = 0.01;
-    const totalReward = amount + amount * apy;
-
-    return totalReward;
-  };
 
   const router = useRouter();
   useEffect(() => {
@@ -140,16 +144,14 @@ const Staking = () => {
   return (
     <div className=" min-h-screen bg-[#10122d] text-white">
       <Navbar />
-
       <div className="mt-10 flex w-full">
         <div className="mx-auto flex w-[80%] flex-col  rounded">
           <StakingTotalCard />
-          <div className="mt-4 w-full rounded-full border-b bg-white "></div>
           <StakingTitle />
           <div className="overflow-y-auto">
           {accountStakes ? (
             accountStakes.map((stake, idx) => {
-              if (stake.amount !== 0) {
+              if (stake.id !== 0) {
                 return (
                   <StakeCard
                     dueDate={stake.dueDate}
