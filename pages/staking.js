@@ -93,7 +93,7 @@ const Staking = () => {
           </h2>
 
           <div className="mt-4 flex flex-row items-center justify-center">
-            <div className="border-1 mx-2 flex flex-col justify-center rounded-full rounded   p-6  text-white">
+            <div className="border-1 mx-2 flex flex-col justify-center  rounded   p-6  text-white">
               <div className="flex flex-row items-center  justify-center pb-4">
                 <GiPadlock fontSize={21} color="orange" />
                 <h3 className="ml-2 text-xl text-white">Staked Cause</h3>
@@ -102,7 +102,7 @@ const Staking = () => {
               <p className="text-center">Amount : {totalStakedAmount} </p>
             </div>
 
-            <div className="border-1 mx-2  flex flex-col justify-center rounded-full rounded  p-6  text-white">
+            <div className="border-1 mx-2  flex flex-col justify-center  rounded  p-6  text-white">
               <div>
                 <div className="flex flex-row items-center justify-center  pb-4">
                   <GiPayMoney fontSize={21} color="orange" />
