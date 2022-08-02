@@ -52,8 +52,8 @@ export const TransactionProvider = ({ children }) => {
   const REWARDS = {
     six: 5.12,
     twelve: 8.3,
-    eighteen: 16.08,
-    twentyFour: 30.6,
+    eighteen: 24.12,
+    twentyFour: 61.20,
   };
 
   const getReward = (stake) => {

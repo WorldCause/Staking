@@ -111,7 +111,7 @@ const Staking = () => {
               </div>
 
               <p className="text-center">
-                Months : {18}
+                Months : {24}
               </p>
             </div>
           </div>
